@@ -1,0 +1,48 @@
+<div class="h-full flex flex-col p-3">
+
+    <!-- NEW CHAT -->
+    <button pButton icon="pi pi-plus" label="New Chat" class="
+      w-full
+      !justify-start
+      mb-4
+    "></button>
+
+    <!-- CONVERSATIONS -->
+    <div class="flex-1 overflow-y-auto space-y-2">
+
+        @for (chat of chats; track chat.id) {
+
+        <app-conversation-item [chat]="chat">
+        </app-conversation-item>
+
+        }
+
+    </div>
+
+    <!-- USER -->
+    <div class="border-t pt-3 mt-3">
+
+        <div class="flex items-center gap-3">
+
+            <div class="
+          w-10
+          h-10
+          rounded-full
+          bg-zinc-300
+        "></div>
+
+            <div>
+                <p class="text-sm font-medium">
+                    sooyoosh
+                </p>
+
+                <p class="text-xs text-zinc-500">
+                    Free Plan
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

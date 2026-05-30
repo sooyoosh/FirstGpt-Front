@@ -1,0 +1,40 @@
+
+
+<div
+  dir="rtl"
+  class="relative mx-auto w-full max-w-3xl rounded-[28px] border border-neutral-700/80 bg-neutral-900/90 p-3 shadow-2xl backdrop-blur"
+>
+  <div class="flex items-end gap-3">
+
+    <textarea
+      [(ngModel)]="message"
+      [disabled]="chatState.isStreaming()"
+      (keydown)="handleKeyDown($event)"
+      rows="1"
+      placeholder="پیام خود را بنویس..."
+      class="max-h-52 min-h-[24px] flex-1 resize-none overflow-y-auto bg-transparent px-2 py-2 text-[15px] leading-7 text-neutral-100 outline-none placeholder:text-neutral-500"
+    ></textarea>
+
+    @if(chatState.isStreaming()) {
+
+      <button
+        (click)="stop()"
+        class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-neutral-700  text-white transition-all duration-200 hover:scale-105 active:scale-95"
+      >
+        <i class="bi bi-stop-fill"></i>
+      </button>
+
+    } @else {
+
+      <button
+        (click)="send()"
+        [disabled]="!message.trim()"
+        class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-black transition-all duration-200 hover:scale-105 hover:bg-neutral-200 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        <i class="bi bi-arrow-up"></i>
+      </button>
+
+    }
+
+  </div>
+</div>

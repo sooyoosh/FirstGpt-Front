@@ -1,0 +1,23 @@
+<div class="w-full h-screen flex gap-2 overflow-hidden bg-neutral-900">
+
+  <!-- Chat Section -->
+  <div class="w-[80%] border border-neutral-800 h-full flex flex-col">
+
+    <!-- Messages -->
+    <div  #messageContainer class="flex-1 overflow-y-auto">
+      <app-message-list></app-message-list>
+    </div>
+
+    <!-- Input -->
+    <div class=" shrink-0 p-3 border-t border-neutral-800">
+      <app-chat-input></app-chat-input>
+    </div>
+
+  </div>
+
+  <!-- Sidebar -->
+  <div class="w-[20%] border h-full"> 
+    <app-sidebar></app-sidebar>
+  </div>
+
+</div>
