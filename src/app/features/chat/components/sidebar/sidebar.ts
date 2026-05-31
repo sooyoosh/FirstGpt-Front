@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { ConversationItem } from '../conversation-item/conversation-item';
-
-
+import { ButtonModule } from 'primeng/button';
+import { AvatarModule } from 'primeng/avatar';
+import { AvatarGroupModule } from 'primeng/avatargroup';
 
 
 @Component({
   selector: 'app-sidebar',
-  imports: [ConversationItem],
+  imports: [ConversationItem,ButtonModule,AvatarModule,AvatarGroupModule],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.css',
 })
