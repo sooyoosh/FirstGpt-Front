@@ -4,6 +4,7 @@ import { TextareaModule } from 'primeng/textarea';
 import { ChatService } from '../../services/chat.service';
 import { FormsModule } from '@angular/forms';
 import { ChatState } from '../../state/chat.state';
+import { ChatMessage } from '../../models/chat-message.model';
 
 @Component({
   selector: 'app-chat-input',
@@ -38,16 +39,42 @@ export class ChatInput {
 
     this.message = '';
 
-    this.chatService.sendMessage(
-      content
-    ).subscribe(res => {
-      this.chatState.addMessage({
-        id: crypto.randomUUID(),
-        role: 'assistant',
-        content: res.answer,
-        createdAt: new Date()
-      })
-    })
+
+    //add user message
+       const userMessage: ChatMessage = {
+         id: crypto.randomUUID(),
+         role: 'user',
+         content,
+         createdAt: new Date()
+       };
+
+       this.chatState.addMessage(userMessage);
+    //add user message
+
+
+
+
+    const assistantMessageId = crypto.randomUUID();
+
+    this.chatState.addMessage({
+      id: assistantMessageId,
+      role: 'assistant',
+      content: '',
+      createdAt: new Date(),
+      isStreaming: true
+    });
+
+
+
+
+    this.chatService.streamMessage(content, (chunk) => {
+
+      this.chatState.appendToMessage(
+        assistantMessageId,
+        chunk
+      );
+
+    });
 
   }
 

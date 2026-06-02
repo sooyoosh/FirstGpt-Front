@@ -16,104 +16,73 @@ export class ChatService {
     private http:HttpClient
   ) { }
 
-   sendMessage(content: string) {
+  //  sendMessage(content: string) {
 
 
-     const userMessage: ChatMessage = {
-       id: crypto.randomUUID(),
-       role: 'user',
-       content,
-       createdAt: new Date()
-     };
+  //    const userMessage: ChatMessage = {
+  //      id: crypto.randomUUID(),
+  //      role: 'user',
+  //      content,
+  //      createdAt: new Date()
+  //    };
  
-     this.chatState.addMessage(userMessage);
-    return this.http.post<{ answer: string }>('https://localhost:7777/api/chat/send',{ message: content });
+  //    this.chatState.addMessage(userMessage);
+  //   return this.http.post<{ answer: string }>('https://localhost:7777/api/chat/send',{ message: content });
   
 
 
-    // if (!content.trim()) return;
-    // this.abortController = new AbortController();
 
-    // user message
-
-    // empty assistant message
-    // const assistantMessage: ChatMessage = {
-    //   id: crypto.randomUUID(),
-    //   role: 'assistant',
-    //   content: '',
-    //   createdAt: new Date(),
-    //   isStreaming: true
-    // };
-
-    //this.chatState.addMessage(assistantMessage);
-
-    //this.chatState.setStreaming(true);
-
-    // fake ai response
-    // const fakeResponse =
-    //   'سلام 👋 این یک پاسخ تستی برای شبیه‌سازی استریم مدل هوش مصنوعی داش سروش است.';
-
-
-    // try {
-
-    //   await this.fakeStream(
-    //     assistantMessage.id,
-    //     fakeResponse
-    //   );
-
-    // } finally {
-
-    //   this.chatState.setStreaming(false);
-    // }
-
-
-
-
-  }
-
-  // private async fakeStream(
-  //   messageId: string,
-  //   text: string
-  // ) {
-
-  //   for (let i = 0; i < text.length; i++) {
-
-
-  //     if (this.abortController?.signal.aborted) {
-
-  //       this.chatState.finishStreaming(messageId);
-
-  //       return;
-  //     }
-
-
-
-  //     await this.delay(25);
-
-  //     if (this.abortController?.signal.aborted) {
-
-  //       this.chatState.finishStreaming(messageId);
-
-  //       return;
-  //     }
-
-
-
-  //     this.chatState.appendToMessage(
-  //       messageId,
-  //       text[i]
-  //     );
-  //   }
-
-  //   this.chatState.finishStreaming(messageId);
-  //   this.abortController = undefined;
   // }
 
-  private delay(ms: number) {
-    return new Promise(resolve =>
-      setTimeout(resolve, ms)
-    );
+  
+
+async streamMessage(message: string, onChunk: (chunk: string) => void) {
+
+  this.abortController = new AbortController();
+
+
+
+
+  const response = await fetch(
+    'https://localhost:7777/api/chat/stream',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ message }),
+      signal: this.abortController?.signal
+    }
+  );
+
+  const reader = response.body?.getReader();
+  const decoder = new TextDecoder();
+
+  while (true) {
+
+    const { value, done } = await reader!.read();
+    if (done) break;
+
+    const chunk = decoder.decode(value);
+
+    chunk
+      .split('\n\n')
+      .forEach(line => {
+        if (line.startsWith('data:')) {
+          const data = line.replace('data:', '').trim();
+          if (data === '[DONE]') return;
+          onChunk(data);
+        }
+      });
   }
+}
+
+
+
+
+
+
+ 
 
   stopGeneration() {
 
