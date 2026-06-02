@@ -40,7 +40,14 @@ export class ChatInput {
 
     this.chatService.sendMessage(
       content
-    );
+    ).subscribe(res => {
+      this.chatState.addMessage({
+        id: crypto.randomUUID(),
+        role: 'assistant',
+        content: res.answer,
+        createdAt: new Date()
+      })
+    })
 
   }
 

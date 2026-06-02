@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ChatState } from '../state/chat.state';
 import { ChatMessage } from '../models/chat-message.model';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -12,95 +13,101 @@ export class ChatService {
 
   constructor(
     private chatState: ChatState,
-    
+    private http:HttpClient
   ) { }
 
-  async sendMessage(content: string) {
+   sendMessage(content: string) {
 
-    if (!content.trim()) return;
-    this.abortController = new AbortController();
+
+     const userMessage: ChatMessage = {
+       id: crypto.randomUUID(),
+       role: 'user',
+       content,
+       createdAt: new Date()
+     };
+ 
+     this.chatState.addMessage(userMessage);
+    return this.http.post<{ answer: string }>('https://localhost:7777/api/chat/send',{ message: content });
+  
+
+
+    // if (!content.trim()) return;
+    // this.abortController = new AbortController();
 
     // user message
-    const userMessage: ChatMessage = {
-      id: crypto.randomUUID(),
-      role: 'user',
-      content,
-      createdAt: new Date()
-    };
-
-    this.chatState.addMessage(userMessage);
 
     // empty assistant message
-    const assistantMessage: ChatMessage = {
-      id: crypto.randomUUID(),
-      role: 'assistant',
-      content: '',
-      createdAt: new Date(),
-      isStreaming: true
-    };
+    // const assistantMessage: ChatMessage = {
+    //   id: crypto.randomUUID(),
+    //   role: 'assistant',
+    //   content: '',
+    //   createdAt: new Date(),
+    //   isStreaming: true
+    // };
 
-    this.chatState.addMessage(assistantMessage);
+    //this.chatState.addMessage(assistantMessage);
 
-    this.chatState.setStreaming(true);
+    //this.chatState.setStreaming(true);
 
     // fake ai response
-    const fakeResponse =
-      'سلام 👋 این یک پاسخ تستی برای شبیه‌سازی استریم مدل هوش مصنوعی داش سروش است.';
+    // const fakeResponse =
+    //   'سلام 👋 این یک پاسخ تستی برای شبیه‌سازی استریم مدل هوش مصنوعی داش سروش است.';
 
 
-    try {
+    // try {
 
-      await this.fakeStream(
-        assistantMessage.id,
-        fakeResponse
-      );
+    //   await this.fakeStream(
+    //     assistantMessage.id,
+    //     fakeResponse
+    //   );
 
-    } finally {
+    // } finally {
 
-      this.chatState.setStreaming(false);
-    }
+    //   this.chatState.setStreaming(false);
+    // }
+
 
 
 
   }
 
-  private async fakeStream(
-    messageId: string,
-    text: string
-  ) {
+  // private async fakeStream(
+  //   messageId: string,
+  //   text: string
+  // ) {
 
-    for (let i = 0; i < text.length; i++) {
-
-
-      if (this.abortController?.signal.aborted) {
-
-        this.chatState.finishStreaming(messageId);
-
-        return;
-      }
+  //   for (let i = 0; i < text.length; i++) {
 
 
+  //     if (this.abortController?.signal.aborted) {
 
-      await this.delay(25);
+  //       this.chatState.finishStreaming(messageId);
 
-      if (this.abortController?.signal.aborted) {
-
-        this.chatState.finishStreaming(messageId);
-
-        return;
-      }
+  //       return;
+  //     }
 
 
 
-      this.chatState.appendToMessage(
-        messageId,
-        text[i]
-      );
-    }
+  //     await this.delay(25);
 
-    this.chatState.finishStreaming(messageId);
-    this.abortController = undefined;
-  }
+  //     if (this.abortController?.signal.aborted) {
+
+  //       this.chatState.finishStreaming(messageId);
+
+  //       return;
+  //     }
+
+
+
+  //     this.chatState.appendToMessage(
+  //       messageId,
+  //       text[i]
+  //     );
+  //   }
+
+  //   this.chatState.finishStreaming(messageId);
+  //   this.abortController = undefined;
+  // }
 
   private delay(ms: number) {
     return new Promise(resolve =>

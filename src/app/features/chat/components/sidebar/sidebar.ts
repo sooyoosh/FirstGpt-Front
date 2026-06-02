@@ -16,22 +16,22 @@ export class Sidebar {
 chats = [
   {
     id: '1',
-    title: 'Angular Chat UI'
+    title: 'فواید خواب'
   },
 
   {
     id: '2',
-    title: 'PrimeNG Design'
+    title: 'فواید کهیر'
   },
 
   {
     id: '3',
-    title: 'Tailwind Layout'
+    title: 'سلام بر تو'
   },
 
   {
     id: '4',
-    title: 'Streaming Messages'
+    title: 'چت خوشکل'
   }
 ];
 
